@@ -4,7 +4,7 @@ import subprocess
 import streamlit as st
 import pandas as pd
 
-from constant.constant import PPR_PATH, COUNTRIES_PATTERNS_PATH, COUNTRIES_CSV_PATH, BAT_PATH, COUNTRY_EVENTS_PATH
+from constant.constant import PPR_PATH, COUNTRIES_PATTERNS_PATH, COUNTRIES_CSV_PATH, COUNTRY_EVENTS_PATH
 from constant.index_metadata import INDEX_NAMES_THAT_NEED_CHANGING, MAIN_NAMES_THAT_NEED_CHANGING, INDEX_METADATA
 from constant.tips import (
     GET_TIP_PATTERN_LENGTH_RANGE_SLIDER,
@@ -24,13 +24,6 @@ CORRELATION_COLUMN                          = "correlation_column"
 COUNTRY_TABLE_NAME                          = "country"
 COUNTRY_PATTERN_TABLE_NAME                  = "country_pattern"
 COUNTRY_PATTERN_COUNTRY_A_ID_FK_COLUMN_NAME = "country_a_id_fk"
-
-
-def run_requirements():
-    ## TODO WARNING: You are using pip version 22.0.3; however, version 23.3.2 is available.
-    # You should consider upgrading via the '/home/adminuser/venv/bin/python -m pip install --upgrade pip' command.
-    # /bin/sh: 1: /mount/src/qgi/.bat: Permission denied
-    subprocess.run(BAT_PATH, shell = True)
 
 
 def process_display_dataframe(df, DISPLAY_DF_NEW_COLUMN_NAMES, countries_df):
@@ -179,8 +172,8 @@ def switch_country_ids_to_names_for_ppr(ppr_path = PPR_PATH, countries_path = CO
     ppr_df.insert(0, "country_a_id_fk", country_a_names)
     ppr_df.insert(1, "country_b_id_fk", country_b_names)
 
-    # Save the modified DataFrame to a new CSV file
-    ppr_df.to_csv(ppr_path, index=False)
+    return ppr_df
+
 
 
 def get_country_name_by_id(country_id: str) -> str:
@@ -416,7 +409,7 @@ def FETCHING_INDEXES(csv_files):
     index_dfs = []
     index_names = []
     for index_path in csv_files:
-        index_name = index_path.split("/")[-1].replace("MAIN - ", "").replace(".csv", "")
+        index_name = os.path.basename(index_path).replace("MAIN - ", "").replace(".csv", "")
         # if index_name in PATTERNIZED_INDEXES:
         index_names.append(index_name)
         index_dfs.append(pd.read_csv(index_path))
@@ -757,7 +750,7 @@ def read_events_as_df(file_name):
     file_path = COUNTRY_EVENTS_PATH + file_name
     if os.path.exists(file_path):
         events = []
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8', errors='replace') as file:
             for line in file:
                 if line.strip():
                     parts = line.split('|')
