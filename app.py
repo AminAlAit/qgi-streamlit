@@ -9,27 +9,11 @@
 ## TODO save strings in constant, to avoid magic strings
 
 
-import sys
-import subprocess
 import streamlit as st
 
-from utils.utils import switch_country_ids_to_names_for_ppr
+st.set_page_config(layout = "wide", page_title = "QG Intelligence", page_icon = "🌐")
+
 from pages import base, patterns, events, experimental, faq, contact
-
-
-if "set_page_config_bool" not in st.session_state:
-    st.session_state["set_page_config_bool"] = True
-if st.session_state["set_page_config_bool"]:
-    st.set_page_config(layout = "wide", page_title = "QG Intelligence", page_icon = "🌐")
-    st.session_state["set_page_config_bool"] = False
-
-
-# Data Prep
-# References: 
-# https://discuss.streamlit.io/t/new-package-st-pages-change-page-names-and-icons-in-sidebar-without-changing-filenames/33969/56
-# https://st-pages.streamlit.app
-subprocess.check_call([sys.executable, "-m", "pip", "install", "streamlit-timeline"])
-switch_country_ids_to_names_for_ppr()
 
 
 pages = [
@@ -44,3 +28,4 @@ pages = [
 
 pg = st.navigation(pages)
 pg.run()
+

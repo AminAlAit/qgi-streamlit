@@ -10,18 +10,15 @@ from streamlit_extras.customize_running import center_running
 from streamlit_echarts import st_echarts
 
 
-center_running()
-
-
 def base():
+    center_running()
     st.markdown("# QG Intelligence")
     col1, col2 = st.columns([3, 1])
     ppr_df = compare_rankings(PPR_PATH, make_countries_index = False)
 
     with col1:
         with st.container(border = True):
-            grouped = get_base_dot_plot_data(ppr_df)
-            top_ranked = grouped.head(1).reset_index(drop=True)
+            top_ranked = get_base_dot_plot_data(ppr_df)
             
             # Normalize the Pattern Power Ranking for determining the point sizes
             pattern_power_ranking_normalized = (top_ranked["Pattern Power Ranking"] - top_ranked["Pattern Power Ranking"].min()) / (top_ranked["Pattern Power Ranking"].max() - top_ranked["Pattern Power Ranking"].min())
