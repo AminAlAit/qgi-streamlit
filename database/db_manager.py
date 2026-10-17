@@ -3,6 +3,7 @@ import time
 import pandas          as pd
 import streamlit as st
 
+from constant.constant import COUNTRIES_PATTERNS_PATH
 from utils.utils import COUNTRIES_CSV_PATH, get_country_name
 
 
@@ -15,7 +16,7 @@ def get_country_b_counts_for_country_a(country_id, country_name, countries_df):
     WEIGHT_AVERAGE_CORR   = 0.5
 
     # Extract patterns for country_id
-    patterns_df = pd.read_csv(r"data/countries/" + country_id + "_" + country_name + "_patterns.csv")
+    patterns_df = pd.read_csv(COUNTRIES_PATTERNS_PATH + country_id + "_" + country_name + "_patterns.csv")
 
     # Convert columns to numericals
     patterns_df["pattern_length_fk"] = pd.to_numeric(patterns_df["pattern_length_fk"], errors="coerce")
@@ -72,15 +73,6 @@ def get_alpha2_by_name(country_name: str) -> str:
     else:
         return None
 
-
-
-# # TODO have common DB_CREDENTIALS
-# DB_CREDENTIALS = {
-#     "user":     "root", 
-#     "password": "5465", 
-#     "host":     "127.0.0.1", 
-#     "database": "qgi_db"
-# }
 # DB_COUNTRY_B_STR      = "country_b"
 # DB_PATTERN_LENGTH_STR = "pattern_length"
 # DB_START_YEAR_A_STR   = "start_year_a"

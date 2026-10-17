@@ -1,39 +1,94 @@
-# Quantitative Geopolitics Intelligence (QG Intel)
- 
-## Overview
-Quantitative Geopolitics Intelligence (QG Intel) is an advanced analytical platform designed to unveil intricate patterns in geopolitical data. By harnessing a vast array of reputable data sources, including the World Bank, the Fund for Peace, Our World in Data, IMF, Freedom House, ACLED, SIPRI, and more, QG Intel synthesizes diverse datasets to reveal and interpret the subtle choreography of geopolitical trends.
+# QGI (Streamlit Prototype, 2024)
 
-## Features
-- **Pattern Analysis**: Discerns correlating patterns between two nations across a variety of indices, offering insights that transcend the apparent, surface-level data.
-- **Early Warning System**: Identifies historical precedents in geopolitical data to forecast potential future events, providing users with actionable foresight.
-- **Comprehensive Indexing**: Engages with over 100 indices to provide a multi-faceted view of global dynamics, enabling a granular understanding of state behaviors.
-- **Dynamic Visualization**: Employs sophisticated plotting techniques to map the trajectories of geopolitical correlations, making complex data accessible and interpretable.
-- **Flexible Querying**: Adapts to queries of varying specificity, from broad pattern searches to detailed analysis, accommodating an extensive range of user inquiries.
+> [!IMPORTANT]
+> **Historical Prototype (2024)**: This repository contains the original Streamlit prototype of QGI developed in January 2024. For the modern enterprise Cloud Data & Applied ML platform, visit [AminAlAit/qgi](https://github.com/AminAlAit/qgi).
 
-## Getting Started
-To run QG Intel, you'll need to have Python installed on your system along with the necessary libraries outlined in the `requirements.txt`. Clone the repository to your local machine and navigate to the project directory.
+[![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Framework](https://img.shields.io/badge/Streamlit-1.36.0-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![Status](https://img.shields.io/badge/Status-Historical_Prototype-blue?style=flat-square)](#)
+[![License](https://img.shields.io/badge/License-Apache_2.0-green?style=flat-square)](LICENSE)
 
-Install the required packages using the following command:
+---
+
+## The Origin Story
+
+In January 2024, I wanted to answer a fundamental quantitative question: **Do historical macroeconomic and geopolitical trajectories across nations repeat with measurable cross-correlation?** 
+
+When an emerging economy experiences a specific combination of debt-to-GDP spikes, currency devaluations, and demographic shifts, can we algorithmically match that multi-variable curve against historical precedents (e.g., Latin America in the 1980s, Southeast Asia in 1997, or Southern Europe in 2011) to understand what followed?
+
+This repository was my first attempt at building that engine. Over a four-week sprint, I pulled together historical datasets from the World Bank and UN statistical divisions, built rolling cross-correlation routines in NumPy and SciPy, and wrapped the entire workflow in a Streamlit interface so I could explore hypotheses in real time.
+
+---
+
+## What This Prototype Does
+
+1. **Cross-National Indicator Matching:** Select a target country and a historical time window, then query multi-indicator time series across 100+ nations.
+2. **Lagged Correlation Engine:** Compute lead-lag correlation coefficients across temporal series to identify preceding and trailing indicators.
+3. **Interactive Visual Exploration:** Render dynamic ECharts and Plotly charts directly inside Streamlit with configurable normalization and windowing filters.
+
+---
+
+## What I Learned (and Why We Outgrew It)
+
+This prototype accomplished exactly what a prototype should: it validated the analytical concept and surfaced the engineering bottlenecks of scaling time-series analysis in a single Python process.
+
+* **In-Memory Compute Ceilings:** Running all-to-all cross-correlations across hundreds of time series with varying sample frequencies on a single thread caused severe CPU and memory bottlenecks as dataset sizes grew.
+* **The Monolith Problem:** Tightly coupling data ingestion, statistical computation, and front-end rendering inside a single Streamlit script meant that UI re-renders frequently triggered redundant compute cycles.
+* **Data Freshness & Pipeline Fragility:** Relying on local CSVs and ad-hoc fetch scripts lacked schema validation, data versioning, and automated reconciliation.
+
+These hard lessons directly informed the architecture of the new platform. In the modern [AminAlAit/qgi](https://github.com/AminAlAit/qgi) monorepo, we completely decoupled compute, storage, and visualization: adopting an enterprise cloud data warehouse, event-driven ingestion pipelines, reproducible ML feature stores, and dedicated client interfaces.
+
+---
+
+## Running the Prototype Locally
+
+The codebase has been cleaned and pinned to Python 3.10 to ensure it boots cleanly on modern systems without dependency breakage.
+
+### Prerequisites
+* Python 3.10.x
+* Git
+
+### Quickstart
+
 ```bash
+# 1. Clone the repository
+git clone https://github.com/AminAlAit/qgi-streamlit.git
+cd qgi-streamlit
+
+# 2. Create and activate an isolated virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# 3. Install pinned dependencies
+pip install --upgrade pip
 pip install -r requirements.txt
-```
 
-Launch the Streamlit application:
-```bash
+# 4. Launch the Streamlit application
 streamlit run app.py
 ```
 
-## How to Use
-Upon launching QG Intel, select the desired country from the dropdown menu to begin your exploration. Advanced options enable the refinement of pattern searches based on correlation range, index count, and pattern length. The Early Warning System can be activated to highlight patterns where a historical precedent may offer predictive power.
+Open your browser at `http://localhost:8501` to explore the original interface.
 
-## Contributing
-Contributions are what make the open-source community such an incredible place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+---
 
-If you have a suggestion that would make this better, please fork the repository and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+## Repository Structure
+
+```
+qgi-streamlit/
+├── data/               # Curated historical sample indicators & country pattern CSVs
+├── constant/           # Portable path constants, sector mappings, and index metadata
+├── database/           # Pattern ranking and country lookup helpers
+├── pages/              # Streamlit multi-page views (Base, Patterns, Events, FAQ, Contact)
+├── plotting/           # Interactive ECharts and timeline chart wrappers
+├── utils/              # Cross-correlation, filtering, and time-series transformation logic
+├── app.py              # Main Streamlit application entry point
+├── requirements.txt    # Pinned, reproducible runtime dependencies
+├── .gitignore          # Clean environment and OS exclusions
+└── README.md           # Historical context and run instructions
+```
+
+---
 
 ## License
-Distributed under the MIT License. See LICENSE for more information.
 
-## Contact
-For any inquiries or further assistance, please reach out through the Issues tab on the GitHub repository.
+This historical codebase is released under the [Apache 2.0 License](LICENSE).

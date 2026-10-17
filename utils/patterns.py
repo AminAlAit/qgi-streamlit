@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime
 import streamlit as st
 
+from constant.constant import COUNTRIES_PATTERNS_PATH
 from utils.utils import switch_country_ids_to_names_for_ppr
 
 
@@ -12,7 +13,8 @@ WEIGHT_PATTERN_LENGTH      = 0.1
 WEIGHT_INDEXES             = 0.3
 WEIGHT_AVERAGE_CORR        = 0.6
 COUNTRY_PATTERN_TABLE_NAME = "country_pattern"
-COUNTRIES_PATH             = "data/countries/"
+COUNTRIES_PATH             = COUNTRIES_PATTERNS_PATH
+
 
 
 REGION_COUNTRIES = {
@@ -142,8 +144,7 @@ def compare_rankings(PPR_PATH, make_countries_index = True, rows_count = 95000, 
     temp_ppr_path  = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/data/ppr/ppr_1.csv"
     countries_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/data/country.csv"
 
-    switch_country_ids_to_names_for_ppr(ppr_path = temp_ppr_path, countries_path = countries_path)
-    temp_ppr = pd.read_csv(temp_ppr_path)
+    temp_ppr = switch_country_ids_to_names_for_ppr(ppr_path = temp_ppr_path, countries_path = countries_path)
     temp_ppr["Sectors"] = temp_ppr["Sectors"].apply(ast.literal_eval)
     temp_ppr.rename(columns={
         "country_a_id_fk": "Country A",
@@ -218,15 +219,6 @@ def compare_rankings(PPR_PATH, make_countries_index = True, rows_count = 95000, 
     ppr_df = ppr_df[pd.notna(ppr_df["Pattern Power Ranking"])]
     ppr_df = ppr_df.sort_values(by = "Pattern Power Ranking", ascending = False)
 
-    # ppr_df = ppr_df.head(1000) # `.style` can not style more than a certain limit, so 7000 is a safe maximum number to use. 
-    # ppr_df = ppr_df[ppr_df["Organizations"] > 1]
-    # ppr_df = ppr_df.iloc[:, 1:]
-
-    # if make_countries_index:
-    #     ppr_df.set_index(["Country A", "Country B"], inplace = True)
-    
-    #ppr_df = ppr_df.style.applymap(color_countries, subset=["Country A", "Country B"])
-
     ppr_df.index = [i + 1 for i in range(len(ppr_df))]
     ppr_df = ppr_df.head(rows_count)
     return ppr_df
@@ -234,4 +226,10 @@ def compare_rankings(PPR_PATH, make_countries_index = True, rows_count = 95000, 
 
 @st.cache_data(ttl=600)
 def get_base_dot_plot_data(ppr_df):
-    return ppr_df.sort_values("Pattern Power Ranking", ascending=False).groupby(["Pattern Length", "Number of Indexes"])
+    return (
+        ppr_df.sort_values("Pattern Power Ranking", ascending=False)
+        .groupby(["Pattern Length", "Number of Indexes"])
+        .head(1)
+        .reset_index(drop=True)
+    )
+

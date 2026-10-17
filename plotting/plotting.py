@@ -532,8 +532,6 @@ def display_timeline(five_params, country_a, start_year_a, country_b, start_year
         # https://pypi.org/project/streamlit-timeline/
         # https://timeline.knightlab.com/docs/json-format.html#json-slide
         
-        # with open(r"C:\Users\Amin\Desktop\trojan\trojan 2.0\data\events\JSON\sample.json", "r") as f:
-        #     data = f.read()
         events = get_events(
             country_a, 
             (start_year_a, start_year_a + patt_len),
@@ -545,7 +543,8 @@ def display_timeline(five_params, country_a, start_year_a, country_b, start_year
 
 
 def get_events(country_a, year_range_a, country_b, year_range_b):
-    EVENTS_CSVS_SOURCE_PATH = r"/workspaces/qgi/data/events/"
+    from constant.constant import COUNTRY_EVENTS_PATH
+    EVENTS_CSVS_SOURCE_PATH = COUNTRY_EVENTS_PATH
 
     country_a_path = os.path.join(EVENTS_CSVS_SOURCE_PATH, country_a + ".csv")
     country_a_path = country_a_path.strip()

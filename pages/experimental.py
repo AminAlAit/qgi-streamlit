@@ -1,5 +1,6 @@
 """Dummy docstring"""
 
+from pathlib import Path
 import streamlit as st
 from utils.utils import get_sorted_countries_list, find_csv_files, FETCHING_INDEXES
 from streamlit_extras.customize_running import center_running
@@ -9,7 +10,8 @@ from streamlit_echarts import st_echarts
 def experimental():
 
     center_running()
-    INDEXES_ROOT_PATH   = r"/workspaces/qgi/data/indexes"
+    DATA_DIR            = Path(__file__).resolve().parent.parent / "data"
+    INDEXES_ROOT_PATH   = str(DATA_DIR / "indexes")
     TIP_EXP_COUNTRY     = ""
     TIP_EXP_INDEX       = ""
     TIP_EXP_YEARS_RANGE = ""
